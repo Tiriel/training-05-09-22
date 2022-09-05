@@ -23,4 +23,17 @@ class DefaultController extends AbstractController
             'controller_name' => 'contact',
         ]);
     }
+
+    public function menu(int $max = 5)
+    {
+        $menu = [
+            ['name' => 'Action'],
+            ['name' => 'Adventure'],
+        ];
+
+        return $this->render('_menu.html.twig', [
+            'menu' => $menu,
+            'max' => $max,
+        ]);
+    }
 }

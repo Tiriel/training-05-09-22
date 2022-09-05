@@ -14,6 +14,10 @@
         {% endblock %}
     </head>
     <body>
+        {% block navbar %}
+            {{ include('_navbar.html.twig', {}, with_context = false) }}
+        {% endblock %}
+{#        {{ render(controller('App\\Controller\\DefaultController::menu', {'max': 3})) }}#}
         {% block body %}{% endblock %}
     </body>
 </html>

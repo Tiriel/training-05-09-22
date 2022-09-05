@@ -1,0 +1,11 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            {% for item in menu %}
+                <li class="nav-item">{{ item.name }}</li>
+                {% else %}
+                <li class="nav-item">No genre yet.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</nav>
