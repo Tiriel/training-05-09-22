@@ -17,9 +17,12 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class MovieRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private int $moviesPerPage;
+
+    public function __construct(ManagerRegistry $registry, int $moviesPerPage)
     {
         parent::__construct($registry, Movie::class);
+        $this->moviesPerPage = $moviesPerPage;
     }
 
     public function add(Movie $entity, bool $flush = false): void
