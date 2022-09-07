@@ -6,6 +6,7 @@ use App\Consumer\OMDbApiConsumer;
 use App\Entity\Movie;
 use App\Repository\MovieRepository;
 use App\Transformer\OmdbMovieTransformer;
+use Symfony\Component\HttpClient\HttpClient;
 
 class MovieProvider
 {
@@ -18,7 +19,7 @@ class MovieProvider
     public function getMovieByTitle(string $title): Movie
     {
         $movie = $this->transformer->transform(
-            $this->consumer->fetchOmdbMovie($title)
+            $this->consumer->getMovieByTitle($title)
         );
 
         if ($movieEntity = $this->repository->findOneBy(['title' => $movie->getTitle()])) {

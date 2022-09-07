@@ -23,6 +23,8 @@ class OmdbMovieTransformer implements DataTransformerInterface
             ->setCountry($value['Country'])
             ->setReleasedAt(new \DateTimeImmutable($date))
             ->setPrice(5.0)
+            ->setImdbId($value['imdbID'])
+            ->setRated($value['Rated'])
         ;
 
         $genreNames = explode(', ', $value['Genre']);
