@@ -37,3 +37,7 @@ services:
     App\Notifier\Factory\ChainNotificationFactory:
         arguments:
             $factories: !tagged_iterator app.notification_factory
+
+    App\Security\Voter\MovieRatedVoter:
+        tags:
+            - { name: security.voter, priority: 999 }
