@@ -7,6 +7,7 @@ use App\Repository\MovieRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 #[Route('/movie', name: 'app_movie_')]
 class MovieController extends AbstractController
@@ -22,6 +23,9 @@ class MovieController extends AbstractController
     #[Route('/{!id<\d+>?1}', name: 'details')]
     public function details(int $id, MovieRepository $repository): Response
     {
+        if ($this->isGranted('ROLE_MODERATOR')) {
+            //
+        }
         return $this->render('movie/details.html.twig', [
             'movie' => $repository->find($id),
         ]);

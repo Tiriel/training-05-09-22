@@ -35,6 +35,10 @@ class Book
     #[ORM\OneToMany(mappedBy: 'book', targetEntity: Comment::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $comments;
 
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $addedBy = null;
+
     public function __construct()
     {
         $this->comments = new ArrayCollection();
@@ -119,6 +123,18 @@ class Book
                 $comment->setBook(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getAddedBy(): ?User
+    {
+        return $this->addedBy;
+    }
+
+    public function setAddedBy(?User $addedBy): self
+    {
+        $this->addedBy = $addedBy;
 
         return $this;
     }

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Book;
 use App\Form\BookType;
 use App\Repository\BookRepository;
+use App\Security\Voter\BookVoter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,10 +23,12 @@ class BookController extends AbstractController
     }
 
     #[Route('/{id<\d+>?1}', name: 'details')]
-    public function details(int $id = 1): Response
+    public function details(Book $book): Response
     {
+        $this->denyAccessUnlessGranted(BookVoter::VIEW, $book);
+
         return $this->render('book/index.html.twig', [
-            'controller_name' => $id,
+            'controller_name' => $book->getId(),
         ]);
     }
 
@@ -38,9 +41,10 @@ class BookController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             dump($book);
-            //$repository->add($book, true);
+            $book->setAddedBy($this->getUser());
+            $repository->add($book, true);
 
-            //return $this->redirectToRoute('app_book_index');
+            return $this->redirectToRoute('app_book_index');
         }
 
         return $this->renderForm('book/new.html.twig', [
