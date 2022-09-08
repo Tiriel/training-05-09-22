@@ -2,13 +2,15 @@
 
 namespace App\Controller;
 
+use App\Event\MovieEvent;
 use App\Provider\MovieProvider;
 use App\Repository\MovieRepository;
 use App\Security\Voter\MovieRatedVoter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 #[Route('/movie', name: 'app_movie_')]
 class MovieController extends AbstractController
@@ -22,12 +24,17 @@ class MovieController extends AbstractController
     }
 
     #[Route('/{!id<\d+>?1}', name: 'details')]
-    public function details(int $id, MovieRepository $repository): Response
+    public function details(int $id, MovieRepository $repository, EventDispatcherInterface $dispatcher): Response
     {
         $movie = $repository->find($id);
 
         if ($movie) {
-            $this->denyAccessUnlessGranted(MovieRatedVoter::VIEW, $movie);
+            try {
+                $this->denyAccessUnlessGranted(MovieRatedVoter::VIEW, $movie);
+            } catch (AccessDeniedException $e) {
+                $dispatcher->dispatch(new MovieEvent($movie), MovieEvent::UNDERAGE);
+                throw $e;
+            }
         }
 
         return $this->render('movie/details.html.twig', [
@@ -36,12 +43,17 @@ class MovieController extends AbstractController
     }
 
     #[Route('/omdb/{title}', name: 'omdb')]
-    public function omdb(string $title, MovieProvider $provider): Response
+    public function omdb(string $title, MovieProvider $provider, EventDispatcherInterface $dispatcher): Response
     {
         $movie = $provider->getMovieByTitle($title);
 
         if ($movie) {
-            $this->denyAccessUnlessGranted(MovieRatedVoter::VIEW, $movie);
+            try {
+                $this->denyAccessUnlessGranted(MovieRatedVoter::VIEW, $movie);
+            } catch (AccessDeniedException $e) {
+                $dispatcher->dispatch(new MovieEvent($movie), MovieEvent::UNDERAGE);
+                throw $e;
+            }
         }
 
         return $this->render('movie/details.html.twig', [
